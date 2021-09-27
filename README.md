@@ -3,7 +3,7 @@ A simple python script to help verify downloads from archive.org offline using t
 
 It can process either the `*_files.xml` or `*_meta.sqlite` meta files. If both are present and only the folder is specified, it will prefer the xml file as it contains entries for the other metadata files as well.
 
-It makes use of the walrus operator and so requires at least python 3.8. Other than that, all imports are from the standard library so installation beyond python 3.8+ is needed.
+It makes use of the walrus operator and so requires at least python 3.8. Other than that, all imports are from the standard library so no installation beyond python 3.8+ is needed.
 
 ## usage:
     usage: ia-verify.py [-h] [-m] [-v] [--no-collision] [-s] [-c] FILE_OR_FOLDER [FILE_OR_FOLDER ...]
