@@ -178,7 +178,7 @@ def main():
                     if file_metadata['type'] == 'xml':
                         hash_crc32 = crc32(chunk, hash_crc32)
                         hash_sha1.update(chunk)
-                    print(f'  {file.tell() / size:.2%}', end='\r', flush=True)
+                    print(f'  {file.tell() / size:.2%}  ', end='\r', flush=True)
 
             calculated_hashes = {'md5': hash_md5.hexdigest(),
                                  'crc32': f'{hash_crc32:08x}',
