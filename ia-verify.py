@@ -119,10 +119,12 @@ def main():
                         help="Don't print files that fail due to size mismatch.")
     parser.add_argument('-c', '--no-corrupted', action='store_true',
                         help="Don't print corrupted files.")
+    parser.add_argument('-q', '--no-file-messages', action='store_true',
+                        help="Don't print any file messages. Same as setting all --no options")
     args = parser.parse_args()
 
-    if all((args.no_missing, args.no_verified, args.no_collision, args.no_corrupted, args.no_bad_size)):
-        parser.error('All print options are disabled. Nothing to print, quitting.')
+    if args.no_file_messages:
+        args.no_missing = args.no_verified = args.no_collision = args.no_corrupted = args.no_bad_size = True
 
     for arg_idx, ia_path in enumerate(args.ia_paths):
         if arg_idx != 0:
