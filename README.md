@@ -6,7 +6,7 @@ It can process either the `*_files.xml` or `*_meta.sqlite` meta files. If both a
 It makes use of the walrus operator and so requires at least python 3.8. Other than that, all imports are from the standard library so no installation beyond python 3.8+ is needed.
 
 ## usage:
-    usage: ia-verify.py [-h] [-m] [-v] [--no-collision] [-s] [-c] FILE_OR_FOLDER [FILE_OR_FOLDER ...]
+    usage: ia-verify.py [-h] [-m] [-v] [--no-collision] [-s] [-c] [-q] FILE_OR_FOLDER [FILE_OR_FOLDER ...]
 
     positional arguments:
         FILE_OR_FOLDER      An IA meta file or a folder that contains them. Multiple may be specified.
