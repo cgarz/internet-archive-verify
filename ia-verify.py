@@ -162,17 +162,20 @@ def main():
         files_width = len(str(files_count))
         clear_progress = '\r' + (' ' * len(PROGRESS_LINE_FMT.format(f_pct=0, f_num=0, t_wid=files_width,
                                                                     f_tot=files_count)))
+        summary = {'missing': 0, 'verified': 0, 'collision': 0, 'bad_size': 0, 'corrupted': 0}
         for f_idx, file_metadata in enumerate(files_metadata, start=1):
             file_path = os.path.join(ia_dir, file_metadata['path'])
 
             if not os.path.isfile(file_path):
                 if not args.no_missing:
                     print(STATUS_MISSING, file_metadata['path'])
+                summary['missing'] += 1
                 continue
 
             if file_metadata['size'] != (size := os.path.getsize(file_path)):
                 if not args.no_bad_size:
                     print(STATUS_BAD_SIZE, file_metadata['path'])
+                summary['bad_size'] += 1
                 continue
 
             hash_md5 = hashlib.md5()
@@ -197,10 +200,12 @@ def main():
             if calculated_hashes == expected_hashes:
                 if not args.no_verified:
                     print(STATUS_VERIFIED, file_metadata['path'])
+                summary['verified'] += 1
             elif file_metadata['type'] == 'sqlite' or all(calculated != expected for calculated, expected in
                                                           zip(calculated_hashes.values(), expected_hashes.values())):
                 if not args.no_corrupted:
                     print(STATUS_CORRUPTED, file_metadata['path'])
+                summary['corrupted'] += 1
             elif not args.no_collision:
                 print(STATUS_COLLISION, file_metadata['path'])
                 eprint('Algorithms disagree! This should not occur, likely the data or metadata has been altered!',
@@ -212,6 +217,13 @@ def main():
                        f'Expected SHA1..: {expected_hashes["sha1"]}',
                        f'Returned SHA1..: {calculated_hashes["sha1"]}',
                        sep='\n')
+                summary['collision'] += 1
+
+        print('total:', files_count, end='')
+        for status, count in summary.items():
+            if count > 0:
+                print(f', {status}: {count}', end='')
+        print()
 
 
 if __name__ == '__main__':
