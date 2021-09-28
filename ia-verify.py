@@ -25,6 +25,8 @@ MD5_EMPTY   = 'd41d8cd98f00b204e9800998ecf8427e'
 CRC32_EMPTY = '00000000'
 SHA1_EMPTY  = 'da39a3ee5e6b4b0d3255bfef95601890afd80709'
 
+PROGRESS_LINE_FMT = '\r{f_pct:7.2%}, file {f_num:>{t_wid}} of {f_tot}'
+
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -122,8 +124,8 @@ def main():
     if all((args.no_missing, args.no_verified, args.no_collision, args.no_corrupted, args.no_bad_size)):
         parser.error('All print options are disabled. Nothing to print, quitting.')
 
-    for idx, ia_path in enumerate(args.ia_paths):
-        if idx != 0:
+    for arg_idx, ia_path in enumerate(args.ia_paths):
+        if arg_idx != 0:
             print()
         if len(args.ia_paths) > 1:
             print('Processing:', ia_path)
@@ -156,7 +158,11 @@ def main():
             if not (files_metadata := sqlite_parse(metafile_path)):
                 continue
 
-        for file_metadata in files_metadata:
+        files_count = len(files_metadata)
+        files_width = len(str(files_count))
+        clear_progress = '\r' + (' ' * len(PROGRESS_LINE_FMT.format(f_pct=0, f_num=0, t_wid=files_width,
+                                                                    f_tot=files_count)))
+        for f_idx, file_metadata in enumerate(files_metadata, start=1):
             file_path = os.path.join(ia_dir, file_metadata['path'])
 
             if not os.path.isfile(file_path):
@@ -178,7 +184,10 @@ def main():
                     if file_metadata['type'] == 'xml':
                         hash_crc32 = crc32(chunk, hash_crc32)
                         hash_sha1.update(chunk)
-                    print(f'  {file.tell() / size:.2%}  ', end='\r', flush=True)
+                    eprint(PROGRESS_LINE_FMT.format(
+                               f_pct=(file.tell() / size), f_num=f_idx, t_wid=files_width, f_tot=files_count),
+                           end='', flush=True)
+            eprint(clear_progress, end='\r')
 
             calculated_hashes = {'md5': hash_md5.hexdigest(),
                                  'crc32': f'{hash_crc32:08x}',
