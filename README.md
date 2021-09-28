@@ -12,9 +12,10 @@ It makes use of the walrus operator and so requires at least python 3.8. Other t
         FILE_OR_FOLDER      An IA meta file or a folder that contains them. Multiple may be specified.
 
     optional arguments:
-        -h, --help          show this help message and exit
-        -m, --no-missing    Don't print missing files.
-        -v, --no-verified   Don't print verified files.
-        --no-collision      Don't print files with collisions. (Disagreement between algorithms / Tampered data)
-        -s, --no-bad-size   Don't print files that fail due to size mismatch.
-        -c, --no-corrupted  Don't print corrupted files.
+        -h, --help             show this help message and exit
+        -m, --no-missing       Don't print missing files.
+        -v, --no-verified       Don't print verified files.
+        --no-collision         Don't print files with collisions. (Disagreement between algorithms / Tampered data)
+        -s, --no-bad-size      Don't print files that fail due to size mismatch.
+        -c, --no-corrupted     Don't print corrupted files.
+        -q, --no-file-messages  Don't print any file messages. Same as setting all --no options
