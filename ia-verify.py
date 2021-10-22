@@ -85,7 +85,7 @@ def xml_parse(metafile_path):
         return False
 
     files_metadata = []
-    for file in ETree.parse(metafile_path).getroot():
+    for file in files:
         file_metadata = {'type': 'xml',
                          'path': file.get('name')}
 
