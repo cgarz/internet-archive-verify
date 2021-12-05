@@ -104,6 +104,26 @@ def xml_parse(metafile_path):
     return files_metadata
 
 
+def dump_hashes(args, files_metadata):
+    metafile_type = files_metadata[0]['type']
+
+    hash_types = []
+    for hash, do_dump in zip(('md5', 'crc32', 'sha1'), (args.dump_md5, args.dump_crc32, args.dump_sha1)):
+        if do_dump:
+            hash_types.append(hash)
+
+    for idx, hash in enumerate(hash_types, start=1):
+        if metafile_type == 'sqlite' and hash != 'md5':
+            eprint(f'Cannot dump {hash.upper()} hashes, sqlite format contains only MD5.')
+            continue
+        if len(hash_types) > 1:
+            print(f'{hash.upper()}:')
+        for file in files_metadata:
+            print(f'{file[hash]}  {file["path"]}')
+        if idx != len(hash_types):
+            print()
+
+
 def main():
     parser = ArgumentParser(
         description='A tool to verify internet archive downloads offline using the xml or sqlite metadata files.')
@@ -121,6 +141,12 @@ def main():
                         help="Don't print corrupted files.")
     parser.add_argument('-q', '--no-file-messages', action='store_true',
                         help="Don't print any file messages. Same as setting all --no options")
+    parser.add_argument('--dump-md5', action='store_true',
+                        help='Dump MD5 hashes from metadata file instead of processing.')
+    parser.add_argument('--dump-crc32', action='store_true',
+                        help='Dump CRC32 hashes from metadata file instead of processing (XML metadata file only)')
+    parser.add_argument('--dump-sha1', action='store_true',
+                        help='Dump SHA1 hashes from metadata file instead of processing (XML metadata file only)')
     args = parser.parse_args()
 
     if args.no_file_messages:
@@ -159,6 +185,10 @@ def main():
         else:
             if not (files_metadata := sqlite_parse(metafile_path)):
                 continue
+
+        if args.dump_md5 or args.dump_crc32 or args.dump_sha1:
+            dump_hashes(args, files_metadata)
+            continue
 
         files_count = len(files_metadata)
         files_width = len(str(files_count))
